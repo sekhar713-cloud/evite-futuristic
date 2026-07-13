@@ -6,7 +6,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
 from database import engine, Base
-from routers import auth, events, rsvp
+from routers import auth, events, rsvp, debug
 
 load_dotenv()
 
@@ -26,6 +26,7 @@ app.add_middleware(
 app.include_router(auth.router)
 app.include_router(events.router)
 app.include_router(rsvp.router)
+app.include_router(debug.router)
 
 
 @app.get("/health")
