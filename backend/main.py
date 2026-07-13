@@ -1,6 +1,9 @@
 import os
+from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
 from database import engine, Base
 from routers import auth, events, rsvp
@@ -28,3 +31,16 @@ app.include_router(rsvp.router)
 @app.get("/health")
 def health():
     return {"status": "ok", "service": "evite-api"}
+
+
+# Serve built React frontend (production only — in dev, Vite proxy handles this)
+_DIST = Path(__file__).parent.parent / "frontend" / "dist"
+if _DIST.is_dir():
+    app.mount("/assets", StaticFiles(directory=_DIST / "assets"), name="assets")
+
+    @app.get("/{full_path:path}", include_in_schema=False)
+    async def serve_spa(full_path: str):
+        file = _DIST / full_path
+        if file.is_file():
+            return FileResponse(file)
+        return FileResponse(_DIST / "index.html")
