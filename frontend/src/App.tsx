@@ -8,6 +8,7 @@ import Dashboard from './pages/Dashboard'
 import CreateEvent from './pages/CreateEvent'
 import EventPage from './pages/EventPage'
 import RSVPPage from './pages/RSVPPage'
+import AuthSuccess from './pages/AuthSuccess'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = React.useContext(AuthContext)
@@ -35,6 +36,7 @@ export default function App() {
           <Route path="/create" element={<ProtectedRoute><CreateEvent /></ProtectedRoute>} />
           <Route path="/e/:slug" element={<EventPage />} />
           <Route path="/e/:slug/rsvp" element={<RSVPPage />} />
+          <Route path="/auth/success" element={<AuthSuccess />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>

@@ -4,15 +4,25 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
+from starlette.middleware.sessions import SessionMiddleware
 from dotenv import load_dotenv
 from database import engine, Base
 from routers import auth, events, rsvp, debug
+from routers import google_auth
 
 load_dotenv()
 
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Futuristic Evite API", version="1.0.0", docs_url="/api/docs")
+
+# SessionMiddleware is required by authlib for OAuth state/nonce
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=os.getenv("SECRET_KEY", "dev-secret-change-in-production"),
+    same_site="lax",
+    https_only=os.getenv("BASE_URL", "").startswith("https://"),
+)
 
 origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173").split(",")
 app.add_middleware(
@@ -27,6 +37,7 @@ app.include_router(auth.router)
 app.include_router(events.router)
 app.include_router(rsvp.router)
 app.include_router(debug.router)
+app.include_router(google_auth.router)
 
 
 @app.get("/health")

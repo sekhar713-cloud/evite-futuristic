@@ -19,7 +19,10 @@ class User(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     email = Column(String(255), unique=True, nullable=False, index=True)
     username = Column(String(100), unique=True, nullable=False)
-    password_hash = Column(String(255), nullable=False)
+    password_hash = Column(String(255), nullable=True)   # null for Google-only users
+    google_id = Column(String(100), unique=True, nullable=True, index=True)
+    picture = Column(String(500), nullable=True)
+    name = Column(String(200), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     events = relationship("Event", back_populates="organizer")

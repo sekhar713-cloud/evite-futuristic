@@ -26,6 +26,8 @@ class UserResponse(BaseModel):
     id: UUID
     email: str
     username: str
+    name: Optional[str] = None
+    picture: Optional[str] = None
     created_at: datetime
 
     model_config = {"from_attributes": True}
